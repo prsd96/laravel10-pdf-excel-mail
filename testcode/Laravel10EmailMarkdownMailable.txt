@@ -1,0 +1,326 @@
+Laravel 10 Markdown | Laravel 10 Send Email using Markdown Mailables
+By Hardik Savani November 6, 2023 Category : Laravel
+Hello Dev,
+
+In this post, we will learn laravel 10 send markdown mail. This article will give you a simple example of laravel 10 mail send markdown. I’m going to show you about laravel 10 send email using markdown. we will help you to give an example of laravel 10 send mail using mailable.
+
+Laravel 10 Markdown provides inbuilt pre-define mail templates and components for email. you can use components for tables, email, links, buttons, embed images, etc.
+
+
+
+Step for Laravel 10 Send Email using Markdown Mailables
+Step 1: Install Laravel 10
+
+AD
+Ezoic
+Step 2: Make Configuration
+Step 3: Create Mailable Class with Markdown
+Step 4: Create Controller
+Step 5: Create Routes
+Step 6: Create Blade View
+Run Laravel App
+In this tutorial, I will give you step-by-step instructions to send emails using markdown in laravel 10. so, just follow bellow few steps and make it done.
+
+Step 1: Install Laravel 10
+
+This step is not required; however, if you have not created the laravel app, then you may go ahead and execute the below command:
+
+composer create-project laravel/laravel example-app
+
+
+AD
+Ezoic
+Step 2: Make Configuration
+
+In first step, you have to add send mail configuration with mail driver, mail host, mail port, mail username, mail password so laravel 10 will use those sender configuration for sending email. So you can simply add as like following.
+
+.env
+
+MAIL_MAILER=smtp
+
+MAIL_HOST=smtp.gmail.com
+
+MAIL_PORT=465
+
+MAIL_USERNAME=mygoogle@gmail.com
+
+MAIL_PASSWORD=rrnnucvnqlbsl
+
+MAIL_ENCRYPTION=tls
+
+MAIL_FROM_ADDRESS=mygoogle@gmail.com
+
+MAIL_FROM_NAME="${APP_NAME}"
+
+Read Also: Laravel 10 CRUD Application Example Tutorial
+
+AD
+Ezoic
+Step 3: Create Mailable Class with Markdown
+
+In this step we will create mail class MyDemoMail for email sending. Here we will write code for which view will call and object of user. So let's run bellow command.
+
+php artisan make:mail MyDemoMail --markdown=emails.myDemoMail
+
+Ezoic
+now, let's update code on MyDemoMail.php file as bellow:
+
+app/Mail/MyDemoMail.php
+
+<?php
+
+  
+
+namespace App\Mail;
+
+  
+
+use Illuminate\Bus\Queueable;
+
+use Illuminate\Contracts\Queue\ShouldQueue;
+
+use Illuminate\Mail\Mailable;
+
+use Illuminate\Mail\Mailables\Content;
+
+use Illuminate\Mail\Mailables\Envelope;
+
+use Illuminate\Queue\SerializesModels;
+
+  
+
+class MyDemoMail extends Mailable
+
+{
+
+    use Queueable, SerializesModels;
+
+    public $mailData;
+
+  
+
+    /**
+
+     * Create a new message instance.
+
+     */
+
+    public function __construct($mailData)
+
+    {
+
+        $this->mailData = $mailData;
+
+    }
+
+  
+
+    /**
+
+     * Get the message envelope.
+
+     */
+
+    public function envelope(): Envelope
+
+    {
+
+        return new Envelope(
+
+            subject: 'Mail from ItSolutionStuff.com',
+
+        );
+
+    } 
+
+  
+
+    /**
+
+     * Get the message content definition.
+
+     */
+
+    public function content(): Content
+
+    {
+
+        return new Content(
+
+            markdown: 'emails.myDemoMail',
+
+        );
+
+    }
+
+  
+
+    /**
+
+     * Get the attachments for the message.
+
+     *
+
+     * @return array
+
+     */
+
+    public function attachments(): array
+
+    {
+
+        return [];
+
+    }
+
+}
+
+Step 4: Create Controller
+
+In this step, we will create MailController with index() method where we write code for sending mail to given email address. so first let's create controller by following command and update code on it.
+
+
+AD
+Ezoic
+php artisan make:controller MailController
+
+Now, update code on MailController file.
+
+app/Http/Controllers/MailController.php
+
+<?php
+
+  
+
+namespace App\Http\Controllers;
+
+   
+
+use Illuminate\Http\Request;
+
+use Mail;
+
+use App\Mail\MyDemoMail;
+
+  
+
+class MailController extends Controller
+
+{
+
+    /**
+
+     * Write code on Method
+
+     *
+
+     * @return response()
+
+     */
+
+    public function index()
+
+    {
+
+        $mailData = [
+
+            'title' => 'Mail from ItSolutionStuff.com',
+
+            'url' => 'https://www.itsolutionstuff.com'
+
+        ];
+
+         
+
+        Mail::to('to_your_email@gmail.com')->send(new MyDemoMail($mailData));
+
+         
+
+        dd("Email is sent successfully.");
+
+    }
+
+}
+
+Step 5: Create Routes
+
+In this step, we need to create routes for list of sending email. so open your "routes/web.php" file and add following route.
+
+routes/web.php
+
+<?php
+
+  
+
+use Illuminate\Support\Facades\Route;
+
+  
+
+use App\Http\Controllers\MailController;
+
+  
+
+/*
+
+|--------------------------------------------------------------------------
+
+| Web Routes
+
+|--------------------------------------------------------------------------
+
+|
+
+| Here is where you can register web routes for your application. These
+
+| routes are loaded by the RouteServiceProvider within a group which
+
+| contains the "web" middleware group. Now create something great!
+
+|
+
+*/
+
+  
+
+Route::get('send-mail', [MailController::class, 'index']);
+
+Step 6: Create Blade View
+
+In this step, we will create blade view file and write email that we want to send. now we just write some dummy text. create bellow files on "emails" folder.
+
+resources/views/emails/demoMail.blade.php
+
+@component('mail::message')
+
+# {{ $mailData['title'] }}
+
+  
+
+The body of your message.
+
+  
+
+@component('mail::button', ['url' => $mailData['url']])
+
+Visit Our Website
+
+@endcomponent
+
+  
+
+Thanks,
+
+{{ config('app.name') }}
+
+@endcomponent
+
+Run Laravel App:
+
+All the required steps have been done, now you have to type the given below command and hit enter to run the Laravel app:
+
+php artisan serve
+
+Now, Go to your web browser, type the given URL and view the app output:
+
+Read Also: Laravel 10 REST API Authentication using Sanctum Tutorial
+http://localhost:8000/send-mail

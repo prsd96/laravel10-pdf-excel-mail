@@ -1,0 +1,144 @@
+Laravel 10 Generate PDF File using DomPDF Example
+By Hardik Savani April 20, 2024 Category : Laravel
+Hello Guys,
+
+In this tute, we will discuss laravel 10 pdf file from view. If you have a question about laravel 10 generate pdf file then I will give a simple example with a solution. This article will give you a simple example of how to generate pdf in laravel 10. This tutorial will give you a simple example of laravel 10 create pdf from view. So, let's follow a few steps to create an example of laravel 10 pdf generator.
+
+I will give you a simple example of how to generate a pdf file in laravel 10. we will use the DomPDF composer package to generate a pdf file in laravel 10. just follow the below step and get a simple pdf using laravel 10.
+
+
+
+Step for Laravel 10 Create PDF File using DomPDF Example
+Step 1: Install Laravel 10
+Step 2: Install DomPDF Package
+Step 3: Create Controller
+Step 4: Add Route
+Step 5: Create View File
+Run Laravel App
+Step 1: Install Laravel 10
+
+This step is not required; however, if you have not created the laravel app, then you may go ahead and execute the below command:
+
+composer create-project laravel/laravel example-app
+
+Step 2: Install DomPDF Package
+
+next, we will install DomPDF package using following composer command, let's run bellow command:
+
+composer require barryvdh/laravel-dompdf
+Read Also: Laravel Export to PDF using Maatwebsite Example
+Step 3: Create Controller
+
+In this step, we will create PDFController with generatePDF() where we write code of generate pdf. so let's create controller using bellow command.
+
+php artisan make:controller PDFController
+
+in PDFController, we also get users table data and display them into pdf file. so you can add some dummy data on the users table by using the following tinker command:
+
+php artisan tinker
+
+User::factory()->count(10)->create()
+
+Now, update the code on the controller file.
+
+app/Http/Controllers/PDFController.php
+
+<?php
+  
+namespace App\Http\Controllers;
+  
+use Illuminate\Http\Request;
+use App\Models\User;
+use PDF;
+  
+class PDFController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function generatePDF()
+    {
+        $users = User::get();
+  
+        $data = [
+            'title' => 'Welcome to ItSolutionStuff.com',
+            'date' => date('m/d/Y'),
+            'users' => $users
+        ]; 
+            
+        $pdf = PDF::loadView('myPDF', $data);
+     
+        return $pdf->download('itsolutionstuff.pdf');
+    }
+}
+Step 4: Add Route
+
+Furthermore, open routes/web.php file and update code on it.
+
+routes/web.php
+
+<?php
+  
+use Illuminate\Support\Facades\Route;
+  
+use App\Http\Controllers\PDFController;
+  
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+  
+Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
+Step 5: Create View File
+
+In Last step, let's create myPDF.blade.php(resources/views/myPDF.blade.php) for layout of pdf file and put following code:
+
+resources/views/myPDF.blade.php
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Laravel 10 Generate PDF Example - ItSolutionStuff.com</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+    <h1>{{ $title }}</h1>
+    <p>{{ $date }}</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua.</p>
+  
+    <table class="table table-bordered">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+        </tr>
+        @foreach($users as $user)
+        <tr>
+            <td>{{ $user->id }}</td>
+            <td>{{ $user->name }}</td>
+            <td>{{ $user->email }}</td>
+        </tr>
+        @endforeach
+    </table>
+  
+</body>
+</html>
+Run Laravel App:
+
+All the required steps have been done, now you have to type the given below command and hit enter to run the Laravel app:
+
+php artisan serve
+
+Now, Go to your web browser, type the given URL and view the app output:
+
+Read Also: Laravel 10 Multiple File Upload Tutorial Example
+http://localhost:8000/generate-pdf
